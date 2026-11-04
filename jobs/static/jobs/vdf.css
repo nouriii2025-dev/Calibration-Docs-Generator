@@ -1,42 +1,119 @@
 /* =====================================================================
-   Visual, Dimensional and Function Test Report - replica of the Accutech sample.
-   Uses <section class="sheet cert vdf">, so the title block, key/value rows,
-   signatures and footer come from certificate.css (.cert).
+   Visual, Dimensional and Function Test Report - Accutech
+   <section class="sheet cert vdf">
    Load order: reports.css -> certificate.css -> hydrotest.css -> vdf.css
    ===================================================================== */
 
-/* Top block: sample uses the bold-italic labels at a slightly smaller size */
+/* ---------- Page ---------- */
+.sheet.cert.vdf {
+  --foot-space: 44mm;   /* space from page bottom to the end of the signatures */
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 297mm;
+  padding-bottom: var(--foot-space);
+}
+
+.cert.vdf > * { flex-shrink: 0; }
+
+/* Footer pinned to the bottom (delete this block if certificate.css already does it) */
+.cert.vdf .c-foot {
+  position: absolute;
+  left: 12mm;
+  right: 12mm;
+  bottom: 8mm;
+  margin: 0;
+}
+
+/* ---------- Top block ---------- */
 .cert.vdf .c-title { font: italic 700 20px/1.1 Arial, Helvetica, sans-serif; white-space: nowrap; }
 .cert.vdf .c-id th { font: italic 700 13px/1.2 Arial, sans-serif; }
 .cert.vdf .c-id td.col { font: italic 700 13px/1.2 Arial, sans-serif; }
 .cert.vdf .c-id td { font-weight: 400; font-size: 11px; font-style: italic; }
 .cert.vdf .c-id td b { font-weight: 700; }
-.cert.vdf .c-id tr.gap th, .cert.vdf .c-id tr.gap td { padding-bottom: 6px; }
+.cert.vdf .c-id tr.gap th,
+.cert.vdf .c-id tr.gap td { padding-bottom: 6px; }
 
-/* Thin rule under the identity block */
-.cert.vdf .v-rule { border: 0; border-top: 1px solid #000; margin: 6px 0 8px; }
+.cert.vdf .v-rule {
+  border: 0;
+  border-top: 1px solid #000;
+  margin: 14px 0 12px;
+  width: 100%;
+}
 
-/* Section headings ("Specification of the Device Under Test", "Test Details") */
-.cert.vdf .v-head { margin: 0 0 6px; font: italic 700 12.5px/1.2 Arial, sans-serif; }
-.cert.vdf .v-head.v-td { margin-top: 14px; }
+/* ---------- Section headings ---------- */
+.cert.vdf .v-head {
+  margin: 0 0 10px;
+  font: italic 700 13px/1.2 Arial, sans-serif;
+}
+.cert.vdf .v-head.v-td { margin-top: 30px; }
 
-/* Specification rows */
-.cert.vdf table.v-spec td { padding: 3px 2px; font-size: 11px; line-height: 1.3; }
+/* ---------- Specification table ---------- */
+.cert.vdf table.v-spec {
+  width: 100%;
+  table-layout: fixed;
+}
+.cert.vdf table.v-spec td {
+  vertical-align: top;
+  padding: 4.5px 3px;
+  font-size: 11.5px;
+  line-height: 1.4;
+}
 .cert.vdf table.v-spec td.l { width: 52mm; }
 .cert.vdf table.v-spec td.c { width: 6mm; text-align: center; }
 
-/* Numbered test details */
-.cert.vdf .v-list { list-style: none; margin: 0; padding: 0; counter-reset: v; }
-.cert.vdf .v-list li { counter-increment: v; margin: 0 0 9px; font-size: 11px; line-height: 1.35; }
+/* ---------- Test details ---------- */
+.cert.vdf .v-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: v;
+}
+.cert.vdf .v-list li {
+  counter-increment: v;
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.cert.vdf .v-list li:last-child { margin-bottom: 0; }
 .cert.vdf .v-list li::before { content: counter(v) ") "; }
 
-/* Overall result: double-line box */
+/* ---------- Overall result ---------- */
 .cert.vdf .v-result {
-  border: 3px double #000; padding: 4px 6px 6px; margin: 16px 0 0;
-  font-size: 11px; line-height: 1.35;
+  border: 3px double #000;
+  padding: 8px 10px;
+  margin: 20px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
-/* Signatures */
-.cert.vdf .v-sign { margin-top: 28px; }
-.cert.vdf .v-sign .h { font-size: 12.5px; margin-bottom: 8px; }
-.cert.vdf .v-sign .row .t { width: 38mm; }
+/* ---------- Signatures ----------
+   The ONLY flexible gap: margin-top:auto pushes the signatures down so
+   they always end --foot-space above the bottom of the page.
+   padding-top is the minimum gap below the result box. */
+.cert.vdf .v-sign {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15mm;
+  margin: 30px 0 0;   /* fixed gap between the result box and the signatures */
+  padding-top: 0;
+}
+.cert.vdf .v-sign > div { flex: 1; min-width: 0; }
+.cert.vdf .v-sign .h { font-size: 13px; margin-bottom: 10px; }
+.cert.vdf .v-sign .row { display: flex; align-items: flex-start; line-height: 1.6; }
+.cert.vdf .v-sign .row .t { width: 38mm; flex-shrink: 0; }
+.cert.vdf .v-sign .row .c { width: 6mm; flex-shrink: 0; }
+
+/* ---------- Print ---------- */
+@media print {
+  .sheet.cert.vdf {
+    height: 297mm;
+    min-height: 297mm;
+    padding: 9mm 12mm var(--foot-space);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+}

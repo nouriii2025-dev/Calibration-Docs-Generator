@@ -38,3 +38,49 @@
 @media print {
   .cert.hyd .h-press { background: #c0c0c0; }   /* keep the grey when printing */
 }
+
+
+/* Hydrotest specification spacing */
+.cert.hyd table.kv td {
+  padding: 3px 3px;
+  line-height: 1.45;
+}
+
+/* References and test conditions */
+.cert.hyd .c-spec > tbody > tr > td.split {
+  padding: 7px 5px;
+  line-height: 1.5;
+}
+
+/* Test results */
+.cert.hyd .h-results {
+  margin: 20px 0 9px;
+  font-size: 13px;
+}
+
+.cert.hyd .h-press {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.cert.hyd .h-statement {
+  padding: 12px 10px;
+  margin: 18px 0 15px;
+  line-height: 1.6;
+}
+
+/* Remarks */
+.cert.hyd .c-comments {
+  margin-top: 18px;
+  line-height: 1.5;
+}
+
+.cert.hyd .c-comments p {
+  margin-bottom: 5px;
+}
+
+/* Signatures */
+.cert.hyd .c-sign {
+  margin-top: 32px;
+  line-height: 1.6;
+}
