@@ -54,13 +54,17 @@
               <option value=""{% if not f.value %} selected{% endif %}>— Select —</option>
               {% for c in comm_choices %}<option value="{{ c }}"{% if c == f.value %} selected{% endif %}>{{ c }}</option>{% endfor %}
             </select>
+              {% elif f.key == 'cal_by' %}<select id="f-cal_by" name="cal_by" data-field>
+              <option value=""{% if not f.value %} selected{% endif %}>— Select —</option>
+              {% for c in cal_by_choices %}<option value="{{ c }}"{% if c == f.value %} selected{% endif %}>{{ c }}</option>{% endfor %}
+            </select>
           {% elif f.multiline %}
           <textarea id="f-{{ f.key }}" name="{{ f.key }}" data-field rows="2" maxlength="200">{{ f.value }}</textarea>
           {% else %}
           <input id="f-{{ f.key }}" name="{{ f.key }}" data-field 
-          {% if f.key != 'cal_date' and f.key != 'due_date' %}value="{{ f.value }}" maxlength="200" {% endif %}
+          {% if f.key != 'cal_date' and f.key != 'due_date' and f.key != 'ht_vdr_date' %}value="{{ f.value }}" maxlength="200" {% endif %}
           autocomplete="off" 
-          {% if f.key == 'cal_date' %}type="date" data-dmy="{{ f.value }}"{% elif f.key == 'due_date' %}type="date" data-dmy="{{ f.value }}" 
+          {% if f.key == 'cal_date' %}type="date" data-dmy="{{ f.value }}"{% elif f.key == 'ht_vdr_date' %}type="date" data-dmy="{{ f.value }}" title="Test date printed on the Hydrotest and Visual, Dimensional &amp; Function reports. Leave blank to use the day before Cal Date."{% elif f.key == 'due_date' %}type="date" data-dmy="{{ f.value }}" 
           readonly tabindex="-1" title="Calculated automatically: 18 months after Cal Date"{% else %}placeholder="—"{% endif %}>
           {% endif %}
         </div>

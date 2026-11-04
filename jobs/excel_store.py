@@ -32,7 +32,7 @@ SCHEMA = [  # Excel column order (A..AC)
     ("make", "Make", 0, "Make", "all", True),
     ("tag_no", "Tag No.", 0, "Tag No.", "all", True),
     ("serial_no", "S.No", 0, "Serial Number", "all", True),
-    ("cal_by", "Cal by", 0, "Cal by", "all", True),
+    ("cal_by", "Cal by", 0, "Calibrated By", "all", True),
     ("cal_date", "Cal Date", 0, "Cal Date", "all", True),
     ("due_date", "Due Date", 0, "Due Date", "all", True),
     ("resolution", "Resolution", 0, "Resolution", "all", True),
@@ -47,14 +47,16 @@ SCHEMA = [  # Excel column order (A..AC)
     ("address", "Address", 1, "Address", "all", True),  # 2nd "Address" column (AC)
     ("test_pressure", "Test Pressure", 0, "Test Pressure", "all", True),
     ("ga_drawing", "GA Drawing No", 0, "GA Drawing No", "all", True),
+    ("ht_vdr_date", "Hydrotest & VDR, FT Date", 0, "Hydrotest & VDR, FT Date", "all", True),
     ("status", "Status", 0, "Status", "all", True),
 ]
 EDITABLE = [s[0] for s in SCHEMA]
 LABELS = {s[0]: s[3] for s in SCHEMA}
-DATE_KEYS = ("cal_date", "due_date")
+DATE_KEYS = ("cal_date", "due_date", "ht_vdr_date")
 DASHBOARD_HIDDEN = {"status"}
 STATUS_CHOICES = ("Pending", "Completed")
 COMMUNICATION_CHOICES = ("HART", "Foundation Fieldbus")
+CAL_BY_CHOICES = ("Shibili.K", "Sarandas.K.H", "Mubasheer")
 DEFAULT_STATUS = "Pending"
 
 class StoreError(Exception):
@@ -180,10 +182,20 @@ def _coerce(key, val):
         raise StoreError(f"{LABELS[key]} must be a date like 31/12/2026.")
     return val
 
+def default_test_date(cal_value):
+    """Cal Date (dd/mm/yyyy) -> Hydrotest & VDR, FT Date (dd/mm/yyyy): one day earlier, Monday -> Saturday."""
+    try:
+        d = dt.datetime.strptime((cal_value or "").strip(), "%d/%m/%Y").date()
+    except ValueError:
+        return ""
+    d -= dt.timedelta(days=2 if d.weekday() == 0 else 1)
+    return d.strftime("%d/%m/%Y")
 
 def update_row(ds, updates):
     """Write only the manual-entry fields back to the original workbook."""
     updates = {k: v for k, v in updates.items() if k in EDITABLE}
+    if "cal_date" in updates and "ht_vdr_date" not in updates:     # keep the test date in step with Cal Date
+        updates["ht_vdr_date"] = default_test_date(updates["cal_date"])
     for k, v in updates.items():
         if len(str(v or "")) > 200:
             raise StoreError(f"{LABELS[k]} is too long (max 200 characters).")
@@ -191,6 +203,11 @@ def update_row(ds, updates):
         raise StoreError("Status must be Pending or Completed.")
     if updates.get("communication") and updates["communication"] not in COMMUNICATION_CHOICES:
         raise StoreError("Communication must be HART or Foundation Fielbus.")
+    if updates.get("communication") and updates["communication"] not in COMMUNICATION_CHOICES:
+        raise StoreError("Communication must be HART or Foundation Fielbus.")
+    if updates.get("cal_by") and updates["cal_by"] not in CAL_BY_CHOICES:
+        raise StoreError("Calibrated By must be " + ", ".join(CAL_BY_CHOICES) + ".")
+    p = _path()
     p = _path()
     with LOCK:
         backup = p.with_name(p.stem + ".original" + p.suffix)
@@ -251,12 +268,14 @@ class ImportFailed(StoreError):
 
 
 # Columns the uploaded file must contain (everything except the dashboard-only Status).
-IMPORT_REQUIRED = [s[0] for s in SCHEMA if s[0] != "status"]
+IMPORT_REQUIRED = [s[0] for s in SCHEMA if s[0] not in ("status", "ht_vdr_date")]
 
 # Other spellings accepted for a header on import. Matching is case/space-insensitive.
 HEADER_ALIASES = {
     "test_pressure": ["test pressure"],
+    "instrument_range": ["instr. range", "instr range", "instrument range"],
     "ga_drawing": ["ga drawing number", "ga drawing no.", "ga drawing no", "ga drawing"],
+    "ht_vdr_date": ["hydrotest & vdr ft date", "hydrotest and vdr, ft date"],
 }
 MAX_IMPORT_BYTES = 15 * 1024 * 1024
 
@@ -294,7 +313,8 @@ def import_workbook(upload):
                 for chunk in upload.chunks():
                     out.write(chunk)
             try:
-                wb = load_workbook(incoming)
+                wb = load_workbook(incoming, data_only=True)   # keep the values Excel calculated, not the formula
+                wb._external_links = []                        # drop the link to the other workbook
             except Exception:
                 raise ImportFailed("That file could not be read. Upload a valid .xlsx workbook.")
 

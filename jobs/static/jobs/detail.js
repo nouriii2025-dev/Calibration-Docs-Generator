@@ -9,17 +9,24 @@
   let currentPressureUnit = originalPressureUnit;
 
   // Cal Date / Due Date: native calendar picker (ISO inside the input, dd/mm/yyyy in Excel)
-  const calIn = $('#f-cal_date'), dueIn = $('#f-due_date');
+  const calIn = $('#f-cal_date'), dueIn = $('#f-due_date'), htIn = $('#f-ht_vdr_date');
   const dmyToIso = s => { const m = /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/.exec((s || '').trim()); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : ''; };
   const isoToDmy = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; };
-  const isDate = i => i === calIn || i === dueIn;
+  const isDate = i => i === calIn || i === dueIn || i === htIn;
   const addMonths = (iso, n) => {                        // like Excel EDATE: 31 Aug + 18m -> 28 Feb
     const [y, m, d] = iso.split('-').map(Number);
     const last = new Date(y, m - 1 + n + 1, 0).getDate();
     const t = new Date(y, m - 1 + n, Math.min(d, last));
     return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
   };
-  [calIn, dueIn].forEach(i => { if (i) i.value = dmyToIso(i.dataset.dmy); });
+  const isoStr = t => `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  const testDateIso = iso => {                           // same rule as the reports: Cal Date - 1 day, Monday -> Saturday
+    const [y, m, d] = iso.split('-').map(Number);
+    const t = new Date(y, m - 1, d);
+    t.setDate(t.getDate() - (t.getDay() === 1 ? 2 : 1));
+    return isoStr(t);
+  };
+  [calIn, dueIn, htIn].forEach(i => { if (i) i.value = dmyToIso(i.dataset.dmy); });
 
   const orig = {}; inputs.forEach(i => orig[i.name] = i.value);
   const bar = $('#savebar'), saveBtn = $('#save'), toastEl = $('#toast');
@@ -39,7 +46,11 @@
     pressureUnit.addEventListener('change', refresh);
   }
   if (calIn && dueIn) {
-    const syncDue = () => { dueIn.value = calIn.value ? addMonths(calIn.value, 18) : ''; refresh(); };
+    const syncDue = () => {
+      dueIn.value = calIn.value ? addMonths(calIn.value, 18) : '';
+      if (htIn) htIn.value = calIn.value ? testDateIso(calIn.value) : '';
+      refresh();
+    };
     calIn.addEventListener('input', syncDue);
     calIn.addEventListener('change', syncDue);
   }

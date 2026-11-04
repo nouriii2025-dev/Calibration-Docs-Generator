@@ -80,7 +80,12 @@ def job_detail(request, ds):
     comm_choices = list(store.COMMUNICATION_CHOICES)
     if comm and comm not in comm_choices:      # keep an older free-text value selectable
         comm_choices.append(comm)
+    cal_by = job.get("cal_by", "")
+    cal_by_choices = list(store.CAL_BY_CHOICES)
+    if cal_by and cal_by not in cal_by_choices:
+        cal_by_choices.append(cal_by)
     return render(request, "jobs/detail.html", {
+        "cal_by_choices": cal_by_choices,
         "hydro_refs": [p["pressure"] for p in settings.HYDRO["pressure_standards"]],
         "hydro_default": settings.HYDRO["default_pressure"],
         "job": job, "fields": fields, "status_choices": store.STATUS_CHOICES,

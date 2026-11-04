@@ -41,9 +41,9 @@
       <td class="half">
         {% for s in hs %}
         <table class="kv ws">
-          <tr><td class="n">{{ forloop.counter }}.</td><td class="l">Name</td><td class="c">:</td><td>{{ s.name }}</td></tr>
-          <tr><td></td><td class="l">Serial Number</td><td class="c">:</td><td>{{ s.serial }}</td></tr>
-          <tr><td></td><td class="l">Certificate No.</td><td class="c">:</td><td>{{ s.cert_no }}</td></tr>
+          <tr><td class="l">{{ forloop.counter }}.&nbsp;&nbsp;Name</td><td class="c">:</td><td>{{ s.name }}</td></tr>
+          <tr><td class="l sub">Serial Number</td><td class="c">:</td><td>{{ s.serial }}</td></tr>
+          <tr><td class="l sub">Certificate No.</td><td class="c">:</td><td>{{ s.cert_no }}</td></tr>
         </table>
         {% endfor %}
       </td>

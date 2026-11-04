@@ -42,9 +42,9 @@
       <td class="half">
         {% for s in CERT_FF.standards %}
         <table class="kv ws">
-          <tr><td class="n">{{ forloop.counter }}.</td><td class="l">Name</td><td class="c">:</td><td>{{ s.name }}</td></tr>
-          <tr><td></td><td class="l">Serial Number</td><td class="c">:</td><td>{{ s.serial }}</td></tr>
-          <tr><td></td><td class="l">Certificate No.</td><td class="c">:</td><td>{{ s.cert_no }}</td></tr>
+          <tr><td class="l">{{ forloop.counter }}.&nbsp;&nbsp;Name</td><td class="c">:</td><td>{{ s.name }}</td></tr>
+          <tr><td class="l sub">Serial Number</td><td class="c">:</td><td>{{ s.serial }}</td></tr>
+          <tr><td class="l sub">Certificate No.</td><td class="c">:</td><td>{{ s.cert_no }}</td></tr>
         </table>
         {% endfor %}
       </td>
@@ -114,7 +114,7 @@
   <div class="c-sign">
     <div>
       <b class="h">Calibrated by :</b>
-      <div class="row"><span class="t">{{ CERT_FF.engineer_title }}</span><span class="c">:</span><span><input type="text" class="sign-name" data-sign="cert" value="{{ CERT_FF.engineer_name }}" aria-label="Engineer name" spellcheck="false"></span></div>
+      <div class="row"><span class="t">{{ CERT_FF.engineer_title }}</span><span class="c">:</span><span>{% if job.cal_by %}{{ job.cal_by }}{% else %}<input type="text" class="sign-name" data-sign="cert" value="{{ CERT_FF.engineer_name }}" aria-label="Engineer name" spellcheck="false">{% endif %}</span></div>
     </div>
     <div>
       <b class="h">Approved by:</b>

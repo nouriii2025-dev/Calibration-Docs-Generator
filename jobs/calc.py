@@ -130,6 +130,16 @@ def test_date(s):
     d -= _dt.timedelta(days=2 if d.weekday() == 0 else 1)   # weekday(): Monday == 0
     return d.strftime("%d-%b-%Y")
 
+def report_test_date(job):
+    """Date of Test for the Hydrotest and Visual/Dimensional reports.
+    Uses the 'Hydrotest & VDR, FT Date' chosen on the dashboard; if blank,
+    falls back to the old rule (day before Cal Date, Monday -> Saturday)."""
+    try:
+        d = _dt.datetime.strptime((job.get("ht_vdr_date") or "").strip(), "%d/%m/%Y")
+        return d.strftime("%d-%b-%Y")
+    except ValueError:
+        return test_date(job.get("cal_date"))
+
 def certificate_view(job, unit):
     res = (job.get("resolution") or "").strip()
     if res and unit and _NUMERIC.match(res):
