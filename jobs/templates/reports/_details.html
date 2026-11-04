@@ -1,0 +1,11 @@
+<h4>Customer &amp; Instrument Details</h4>
+<table>
+  <tr><td class="k">Customer</td><td class="v">{{ job.customer }}</td><td class="k">LPO</td><td class="v">{{ job.lpo|default:"—" }}</td></tr>
+  <tr><td class="k">Address</td><td class="v" colspan="3">{{ job.customer_address }}{% if job.address %}<br><b>Location:</b> {{ job.address }}{% endif %}</td></tr>
+  <tr><td class="k">Equipment</td><td class="v">{{ job.equipment }}</td><td class="k">Tag No.</td><td class="v"><b>{{ job.tag_no }}</b></td></tr>
+  <tr><td class="k">Make</td><td class="v">{{ job.make|default:"—"|linebreaksbr }}</td><td class="k">Serial No.</td><td class="v">{{ job.serial_no|default:"—" }}</td></tr>
+  <tr><td class="k">Model</td><td class="v" colspan="3">{{ job.model }}</td></tr>
+  <tr><td class="k">Calibration Range</td><td class="v">{{ job.cal_range }}</td><td class="k">Instrument Range</td><td class="v">{{ job.instrument_range }}</td></tr>
+  <tr><td class="k">Resolution</td><td class="v">{{ job.resolution|default:"—" }}</td><td class="k">Accuracy</td><td class="v">{{ job.accuracy }}</td></tr>
+  <tr><td class="k">Communication</td><td class="v">{{ job.communication|default:"—" }}</td><td class="k">Manifold</td><td class="v">{{ job.manifold|default:"—" }}</td></tr>
+</table>

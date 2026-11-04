@@ -1,0 +1,5 @@
+<div class="lh">
+  <div><h1>{{ LAB.name }}</h1><p>{{ LAB.address }}<br>{{ LAB.contact }}{% if LAB.accreditation %}<br><b>{{ LAB.accreditation }}</b>{% endif %}</p></div>
+  <div class="meta">{{ docno_label }}<br><b>{{ docno|default:"—" }}</b><br>Job No: {{ job.job_no|default:"—" }}<br>Data Sheet: {{ job.data_sheet_no }}</div>
+</div>
+<div class="title"><h2>{{ doc_title }}</h2><span>{{ doc_sub }}</span></div>

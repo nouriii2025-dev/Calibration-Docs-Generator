@@ -1,0 +1,78 @@
+{% load static %}
+<section class="sheet cert vdf">
+
+  <!-- ===== Top block: title, identity fields, logo ===== -->
+  <div class="c-top">
+    <div class="c-main">
+      <h1 class="c-title">{{ VDF.title }}</h1>
+      <table class="c-id">
+        <tr><th>Report No.</th><td class="col">:</td><td><b>{{ job.ft_no|default:"-" }}</b></td></tr>
+
+        <tr class="gap"><th>Customer Details</th><td class="col">:</td>
+            <td><b>{{ vv.customer }}</b><br><span class="addr">{{ job.customer_address }}</span></td></tr>
+        <tr><th>Project detail</th><td class="col">:</td><td><b>{{ job.project|default:"-" }}</b></td></tr>
+        <tr><th>Job No.</th><td class="col">:</td><td>{{ job.job_no|default:"-" }}</td></tr>
+        <tr><th>PO No.</th><td class="col">:</td><td>{{ job.lpo|default:"-" }}</td></tr>
+      </table>
+    </div>
+    <img class="c-logo" src="{% static 'jobs/img/accutech_logo.png' %}" alt="Accutech Automation FZCO">
+  </div>
+
+  <hr class="v-rule">
+
+  <!-- ===== Specification of the Device Under Test ===== -->
+  <h3 class="v-head">Specification of the Device Under Test</h3>
+  <table class="kv v-spec">
+    <tr><td class="l">Inst. Under Testing</td><td class="c">:</td><td>{{ job.equipment|default:"-" }}</td></tr>
+    <tr><td class="l">Manufacturer</td><td class="c">:</td><td>{{ job.make|default:"-" }}</td></tr>
+    <tr><td class="l">Model</td><td class="c">:</td><td>{{ job.model|default:"-" }}</td></tr>
+    <tr><td class="l">Instrument Range</td><td class="c">:</td><td>{{ vv.instrument_range }}</td></tr>
+    <tr><td class="l">Cal. Range</td><td class="c">:</td><td>{{ job.cal_range|default:"-" }}</td></tr>
+    <tr><td class="l">Serial Number</td><td class="c">:</td><td>{{ job.serial_no|default:"-" }}</td></tr>
+    <tr><td class="l">Tag Number</td><td class="c">:</td><td>{{ job.tag_no|default:"-" }}</td></tr>
+    <tr><td class="l">Test Date</td><td class="c">:</td><td>{{ vv.test_date }}</td></tr>
+    <tr><td class="l">Communication</td><td class="c">:</td><td>{{ vv.communication }}</td></tr>
+    <tr><td class="l">Address</td><td class="c">:</td><td>{{ vv.fieldbus_address }}</td></tr>
+  </table>
+
+  <!-- ===== Test Details ===== -->
+  <h3 class="v-head v-td">Test Details</h3>
+  <ol class="v-list">
+    {% for t in vv.details %}<li>{{ t }}</li>{% endfor %}
+  </ol>
+
+  <!-- ===== Overall result ===== -->
+  <div class="v-result">
+    <b>Overall Result:</b><br>
+    <b>{{ VDF.overall_result }}</b>
+  </div>
+
+  <!-- ===== Signatures ===== -->
+  <div class="c-sign v-sign">
+    <div>
+      <b class="h">Tested by :</b>
+      <div class="row"><span class="t">{{ VDF.engineer_title }}</span><span class="c">:</span><span><input type="text" class="sign-name" data-sign="vdf" value="{{ VDF.engineer_name }}" aria-label="Engineer name" spellcheck="false"></span></div>
+    </div>
+    <div>
+      <b class="h">Approved by:</b>
+      <div class="row"><span class="t">{{ VDF.approver_title }}</span><span class="c">:</span><span>{{ VDF.approver_name }}</span></div>
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="c-foot">
+    <img class="wika" src="{% static 'jobs/img/wika_logo.png' %}" alt="WIKA">
+    <div class="addr">
+      <b>{{ CERT.footer.headline }}</b>
+      <span>{{ CERT.footer.address }}</span>
+      <small>{{ CERT.footer.form_no }}</small>
+    </div>
+    <table class="contact">
+      <tr><td>Tel</td><td>: {{ CERT.footer.tel }}</td></tr>
+      <tr><td>Fax</td><td>: {{ CERT.footer.fax }}</td></tr>
+      <tr><td>E-Mail</td><td>: {{ CERT.footer.email }}</td></tr>
+      <tr><td>Website</td><td>: {{ CERT.footer.website }}</td></tr>
+    </table>
+    <img class="iso" src="{% static 'jobs/img/iso_logo.png' %}" alt="ISO 9001">
+  </footer>
+</section>

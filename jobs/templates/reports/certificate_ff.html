@@ -1,0 +1,141 @@
+{% load static %}
+<section class="sheet cert cert-ff">
+
+  <!-- ===== Top block: title, identity fields, logo ===== -->
+  <div class="c-top">
+    <div class="c-main">
+      <h1 class="c-title">Certificate of Calibration</h1>
+      <table class="c-id">
+        <tr><th>Certificate No.</th><td class="col">:</td><td><span class="c-certno">{{ job.cert_no|default:"-" }}</span></td></tr>
+        <tr class="gap"><th>Customer</th><td class="col">:</td>
+            <td><b>{{ cv.customer }}</b><br><span class="addr">{{ job.customer_address }}</span></td></tr>
+        <tr><th>Project</th><td class="col">:</td><td><b>{{ job.project|default:"-" }}</b></td></tr>
+        <tr><th>PO No.</th><td class="col">:</td><td><b>{{ job.lpo|default:"-" }}</b></td></tr>
+        <tr><th>Job number</th><td class="col">:</td><td><b>{{ job.job_no|default:"-" }}</b></td></tr>
+      </table>
+    </div>
+    <img class="c-logo" src="{% static 'jobs/img/accutech_logo.png' %}" alt="Accutech Automation FZCO">
+  </div>
+
+  <div class="c-dates">
+    <span><b>Date of Calibration</b><i class="sep">:</i>{{ cv.cal_date }}</span>
+    <span><b>Re-Calibration Date</b><i class="sep">:</i>{{ cv.recal_date }}</span>
+    <span class="ds"><b>Data Sheet No.</b><i class="sep">:</i>{{ job.data_sheet_no }}</span>
+  </div>
+
+  <!-- ===== Device under calibration  |  Working standard ===== -->
+  <table class="c-spec">
+    <tr><th class="hd">Specification of the Device Under Calibration</th><th class="hd">Working Standard (WS)</th></tr>
+    <tr>
+      <td class="half">
+        <table class="kv">
+          <tr><td class="l">Instrument</td><td class="c">:</td><td>{{ job.equipment }}</td></tr>
+          <tr><td class="l">Manufacturer</td><td class="c">:</td><td>{{ job.make|default:"-" }}</td></tr>
+          <tr><td class="l">Model</td><td class="c">:</td><td>{{ job.model|default:"-" }}</td></tr>
+          <tr><td class="l">Serial Number</td><td class="c">:</td><td>{{ job.serial_no|default:"-" }}</td></tr>
+          <tr><td class="l">Tag No.</td><td class="c">:</td><td>{{ job.tag_no|default:"-" }}</td></tr>
+          <tr><td class="l">Cal. Range</td><td class="c">:</td><td>{{ job.cal_range|default:"-" }}</td></tr>
+          <tr><td class="l">Resolution</td><td class="c">:</td><td>{{ cv.resolution }}</td></tr>
+          <tr><td class="l">Accuracy (±)</td><td class="c">:</td><td>{{ job.accuracy|default:"-" }}</td></tr>
+        </table>
+      </td>
+      <td class="half">
+        {% for s in CERT_FF.standards %}
+        <table class="kv ws">
+          <tr><td class="n">{{ forloop.counter }}.</td><td class="l">Name</td><td class="c">:</td><td>{{ s.name }}</td></tr>
+          <tr><td></td><td class="l">Serial Number</td><td class="c">:</td><td>{{ s.serial }}</td></tr>
+          <tr><td></td><td class="l">Certificate No.</td><td class="c">:</td><td>{{ s.cert_no }}</td></tr>
+        </table>
+        {% endfor %}
+      </td>
+    </tr>
+    <tr><th class="hd" colspan="2">Calibration Conditions</th></tr>
+    <tr><td colspan="2" class="ctr">Reference Procedure No. : &nbsp;{{ CERT_FF.procedure_no }}</td></tr>
+    <tr><td colspan="2" class="cond">
+      <table class="cond3"><tr>
+        <td><span class="lb">Lab. Temperature</span><i>:</i><span class="val">{{ job.temp|default:"-" }}</span></td>
+        <td><span class="lb">Lab. Humidity</span><i>:</i><span class="val">{{ job.humidity|default:"-" }}</span></td>
+        <td><span class="lb">Amb. Pressure</span><i>:</i><span class="val">{{ job.atm_press|default:"-" }}</span></td>
+      </tr></table>
+    </td></tr>
+  </table>
+
+  <!-- ===== Results ===== -->
+  <div class="c-reshead">
+    <b>Calibration Results:</b>
+    <span>Instr. Range: <em>{{ cv.instrument_range_plain }}</em></span>
+  </div>
+  <p class="calhint">Enter the measured readings below – average and deviation are calculated automatically. Tick the notes as needed, then click <b>Print</b>.</p>
+
+    <table class="cal" id="cal-results" data-ds="{{ job.data_sheet_no }}" data-tol="{{ cert_tol }}"
+       data-dp-meas="{{ cert_dp.meas }}"
+       data-dp-avg="{% if cert_dp %}{{ cert_dp.avg }}{% else %}5{% endif %}"
+       data-dp-dev="{% if cert_dp %}{{ cert_dp.dev }}{% else %}5{% endif %}">
+    <colgroup><col style="width:25%"><col style="width:17.5%"><col style="width:17.5%"><col style="width:20%"><col style="width:20%"></colgroup>
+    <thead>
+      <tr class="tall">
+        <th>Applied Pressure (A)</th>
+        <th colspan="2">UUC Measured Value &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ cert_unit|default:"unit" }}</th>
+        <th>Average Value (M)</th>
+        <th>Deviation ( M - A )</th>
+      </tr>
+      <tr>
+        <th>{{ cert_unit|default:"unit" }}</th><th>Upward</th><th>Downward</th>
+        <th>{{ cert_unit|default:"unit" }}</th><th>{{ cert_unit|default:"unit" }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for r in cert_rows %}
+      <tr data-applied="{{ r.applied_raw }}">
+        <td>{{ r.applied_txt4 }}</td>
+        <td><input class="rd" data-k="up_u" type="number" step="any" inputmode="decimal"></td>
+        <td><input class="rd" data-k="dn_u" type="number" step="any" inputmode="decimal"></td>
+        <td class="out" data-o="avg_u"></td>
+        <td class="out" data-o="dev_u"></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- ===== Notes / comments ===== -->
+  <div class="c-notes">
+    <b class="h">Note:</b>
+    <label class="ckrow"><input type="checkbox" class="ck" data-ck="received" checked><span>Instrument is received in good condition.</span></label>
+    <label class="ckrow"><input type="checkbox" class="ck" data-ck="adjusted"><span>Instrument is adjusted and post adjustment values are reported.</span></label>
+    <label class="ckrow"><input type="checkbox" class="ck" data-ck="noadj" checked><span>No adjustment is carried out and measurements in this certificate are as received figures.</span></label>
+  </div>
+
+  <div class="c-comments">
+    <b class="h">Comment(s)</b>
+    {% for c in CERT_FF.comments %}<p>• {{ c }}</p>{% endfor %}
+  </div>
+
+  <!-- ===== Signatures ===== -->
+  <div class="c-sign">
+    <div>
+      <b class="h">Calibrated by :</b>
+      <div class="row"><span class="t">{{ CERT_FF.engineer_title }}</span><span class="c">:</span><span><input type="text" class="sign-name" data-sign="cert" value="{{ CERT_FF.engineer_name }}" aria-label="Engineer name" spellcheck="false"></span></div>
+    </div>
+    <div>
+      <b class="h">Approved by:</b>
+      <div class="row"><span class="t">{{ CERT_FF.approver_title }}</span><span class="c">:</span><span>{{ CERT.approver_name }}</span></div>
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="c-foot">
+    <img class="wika" src="{% static 'jobs/img/wika_logo.png' %}" alt="WIKA">
+    <div class="addr">
+      <b>{{ CERT_FF.footer.headline }}</b>
+      <span>{{ CERT_FF.footer.address }}</span>
+      <small>{{ CERT_FF.footer.form_no }}</small>
+    </div>
+    <table class="contact">
+      <tr><td>Tel</td><td>: {{ CERT_FF.footer.tel }}</td></tr>
+      <tr><td>Fax</td><td>: {{ CERT_FF.footer.fax }}</td></tr>
+      <tr><td>E-Mail</td><td>: {{ CERT_FF.footer.email }}</td></tr>
+      <tr><td>Website</td><td>: {{ CERT_FF.footer.website }}</td></tr>
+    </table>
+    <img class="iso" src="{% static 'jobs/img/iso_logo.png' %}" alt="ISO 9001">
+  </footer>
+</section>

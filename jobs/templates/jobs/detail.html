@@ -1,0 +1,100 @@
+{% extends "jobs/base.html" %}{% load static %}
+{% block title %}{{ job.tag_no }} · Calibration Dashboard{% endblock %}
+{% block sub %}Record {{ pos }} of {{ total }}{% endblock %}
+{% block actions %}
+<a class="btn ghost" href="{% url 'export' %}"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Export to Excel</a>
+{% endblock %}
+{% block body %}
+<main class="wrap">
+  <nav class="crumbs"><a href="{% url 'dashboard' %}" data-nav>← All records</a><span>/</span><span>{{ job.data_sheet_no }}</span></nav>
+  <div class="head">
+    <h2>{{ job.tag_no }}</h2>
+    <span class="sub">{{ job.equipment }}</span>
+    <div class="f statusbox">
+      <label for="f-status">Status</label>
+      <select id="f-status" name="status" data-field>
+        {% for s in status_choices %}<option value="{{ s }}"{% if s == job.status %} selected{% endif %}>{{ s }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="nav">
+      {% if prev_ds %}<a class="btn" data-nav href="{% url 'job' prev_ds %}" title="Previous record">←</a>{% endif %}
+      {{ pos }} / {{ total }}
+      {% if next_ds %}<a class="btn" data-nav href="{% url 'job' next_ds %}" title="Next record">→</a>{% endif %}
+    </div>
+  </div>
+
+  <div class="grid">
+    <section class="card sec">
+      <h3>Job details <span class="tagpill">{{ fields|length }} FIELDS</span></h3>
+      <div class="fields">
+        {% for f in fields %}
+        <div class="f{% if f.multiline %} wide{% endif %}">
+          <label for="f-{{ f.key }}">{{ f.label }}</label>
+          {% if f.key == 'test_pressure' %}
+          <div class="pressure-input">
+            <input
+              id="f-test_pressure"
+              name="test_pressure"
+              data-field
+              type="number"
+              step="any"
+              value="{{ test_pressure_value }}"
+              placeholder="Enter test pressure"
+            >
+
+            <select id="f-test_pressure-unit" aria-label="Test pressure unit">
+              <option value="bar" {% if test_pressure_unit == 'bar' %}selected{% endif %}>bar</option>
+              <option value="psi" {% if test_pressure_unit == 'psi' %}selected{% endif %}>psi</option>
+              <option value="MPa" {% if test_pressure_unit == 'MPa' %}selected{% endif %}>MPa</option>
+              <option value="Kg/cm^2" {% if test_pressure_unit == 'Kg/cm^2' %}selected{% endif %}>Kg/cm²</option>
+            </select>
+          </div>
+          {% elif f.key == 'communication' %}<select id="f-communication" name="communication" data-field>
+          
+              <option value=""{% if not f.value %} selected{% endif %}>— Select —</option>
+              {% for c in comm_choices %}<option value="{{ c }}"{% if c == f.value %} selected{% endif %}>{{ c }}</option>{% endfor %}
+            </select>
+          {% elif f.multiline %}
+          <textarea id="f-{{ f.key }}" name="{{ f.key }}" data-field rows="2" maxlength="200">{{ f.value }}</textarea>
+          {% else %}
+          <input id="f-{{ f.key }}" name="{{ f.key }}" data-field 
+          {% if f.key != 'cal_date' and f.key != 'due_date' %}value="{{ f.value }}" maxlength="200" {% endif %}
+          autocomplete="off" 
+          {% if f.key == 'cal_date' %}type="date" data-dmy="{{ f.value }}"{% elif f.key == 'due_date' %}type="date" data-dmy="{{ f.value }}" 
+          readonly tabindex="-1" title="Calculated automatically: 18 months after Cal Date"{% else %}placeholder="—"{% endif %}>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <p class="hint">Every change is saved straight into the Excel file. Press Ctrl/⌘ + S.</p>
+    </section>
+
+    <aside class="sticky">
+      <section class="card docs">
+        <h3>Documents</h3>
+        <p>Opens a print-ready document in a new tab. Pending edits are saved first.</p>
+        <div class="f hydroref" style="margin-bottom:14px">
+          <label for="f-hydro-ref">Hydrotest Pressure</label>
+          <select id="f-hydro-ref">
+            {% for p in hydro_refs %}
+            <option value="{{ p }}"{% if p == hydro_default %} selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+          </select>
+          <p style="margin:6px 0 0">Selects the Working Standard for the Hydrotest Report. Not saved to Excel.</p>
+        </div>
+        <button class="btn docbtn" data-ref data-report="{% url 'report' job.data_sheet_no 'hydrotest' %}">Hydrotest Report<small>{{ job.ht_no|default:"—" }}</small></button>
+        <button class="btn docbtn" data-report="{% url 'report' job.data_sheet_no 'vdf' %}">Visual, Dimensional &amp; Function Report<small>{{ job.ft_no|default:"—" }}</small></button>
+        <button class="btn docbtn" data-noprint data-report="{% url 'report' job.data_sheet_no 'certificate' %}">Calibration Certificate<small>{{ job.cert_no|default:"—" }}</small></button>
+        <button class="btn docbtn all" data-ref data-report="{% url 'report' job.data_sheet_no 'all' %}">Print All<small>All three documents together</small></button>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<div id="savebar" class="savebar"><div class="savebar-in">
+  <span class="msg">● Unsaved changes</span><div class="spacer"></div>
+  <button id="discard" class="btn">Discard</button>
+  <button id="save" class="btn primary" data-url="{% url 'job_save' job.data_sheet_no %}"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span id="savelbl">Save to Excel</span></button>
+</div></div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'jobs/detail.js' %}"></script>{% endblock %}

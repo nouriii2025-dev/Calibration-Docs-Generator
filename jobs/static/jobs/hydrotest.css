@@ -1,0 +1,40 @@
+/* =====================================================================
+   Certificate of Hydrotest – replica of the Accutech sample.
+   The page uses  <section class="sheet cert hyd">  so the title block, spec table,
+   key/value rows, signatures and footer come from certificate.css (.cert).
+   This file only adds what is specific to the hydrotest sheet.
+   Load order: reports.css -> certificate.css -> hydrotest.css
+   ===================================================================== */
+
+/* References / Test Conditions rows: two centred cells split by a vertical line */
+.cert.hyd .c-spec > tbody > tr > td.split {
+  width: 50%; text-align: center; border-top: 1px solid #000; padding: 3px 0 4px;
+}
+.cert.hyd .c-spec > tbody > tr > td.split + td.split { border-left: 1px solid #000; }
+
+/* "Test Results:" heading + grey pressure box */
+.cert.hyd .h-results {
+  margin: 12px 0 5px; font-weight: 700; font-size: 12.5px; text-decoration: underline;
+}
+.cert.hyd .h-press {
+  display: flex; gap: 8mm; width: 54mm; white-space: nowrap; box-sizing: border-box;
+  background: #c0c0c0; border: 1px solid #000; padding: 3px 6px;
+  font-size: 11.5px;
+}
+
+/* Certification statement box */
+.cert.hyd .h-statement {
+  border: 1px solid #000; text-align: center; padding: 5px 8px;
+  margin: 12px 0 10px;
+}
+
+/* Remarks list */
+.cert.hyd .c-comments .h { font-size: 9px; text-decoration: underline; margin-bottom: 4px; }
+.cert.hyd .c-comments p  { margin: 0 0 3px; }
+
+/* Signatures a little lower, like the sample */
+.cert.hyd .c-sign { margin-top: 26px; }
+
+@media print {
+  .cert.hyd .h-press { background: #c0c0c0; }   /* keep the grey when printing */
+}

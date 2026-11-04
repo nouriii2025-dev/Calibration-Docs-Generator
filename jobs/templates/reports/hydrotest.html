@@ -1,0 +1,102 @@
+{% load static %}
+<section class="sheet cert hyd">
+
+  <!-- ===== Top block: title, identity fields, logo ===== -->
+  <div class="c-top">
+    <div class="c-main">
+      <h1 class="c-title">{{ HYDRO.title }}</h1>
+      <table class="c-id">
+        <tr><th>Certificate No.</th><td class="col">:</td><td><span class="c-certno">{{ job.ht_no|default:"-" }}</span></td></tr>
+        <tr class="gap"><th>Customer</th><td class="col">:</td>
+            <td><b>{{ hv.customer }}</b><br><span class="addr">{{ job.customer_address }}</span></td></tr>
+        <tr><th>Project</th><td class="col">:</td><td><b>{{ job.project|default:"-" }}</b></td></tr>
+        <tr><th>PO No.</th><td class="col">:</td><td><b>{{ job.lpo|default:"-" }}</b></td></tr>
+        <tr><th>Job number</th><td class="col">:</td><td><b>{{ job.job_no|default:"-" }}</b></td></tr>
+      </table>
+    </div>
+    <img class="c-logo" src="{% static 'jobs/img/accutech_logo.png' %}" alt="Accutech Automation FZCO">
+  </div>
+
+  <div class="c-dates">
+    <span><b>Date of Test</b><i class="sep">:</i><b>{{ hv.test_date }}</b></span>
+    <span class="ds">Data Sheet No.<i class="sep">:</i>{{ job.data_sheet_no }}</span>
+  </div>
+
+  <!-- ===== Unit under testing  |  Working standard ===== -->
+  <table class="c-spec">
+    <tr><th class="hd">Specification of the Unit Under Testing</th><th class="hd">Working Standard (WS)</th></tr>
+    <tr>
+      <td class="half">
+        <table class="kv">
+          <tr><td class="l">Unit Under Test</td><td class="c">:</td><td>{{ job.equipment|default:"-" }}</td></tr>
+          <tr><td class="l">Model</td><td class="c">:</td><td>{{ job.model|default:"-" }}</td></tr>
+          <tr><td class="l">Make</td><td class="c">:</td><td>{{ job.make|default:"-"|linebreaksbr }}</td></tr>
+          <tr><td class="l">Instr. Range</td><td class="c">:</td><td>{{ hv.instrument_range }}</td></tr>
+          <tr><td class="l">Cal. Range</td><td class="c">:</td><td>{{ job.cal_range|default:"-" }}</td></tr>
+          <tr><td class="l">Serial Number</td><td class="c">:</td><td>{{ job.serial_no|default:"-" }}</td></tr>
+          <tr><td class="l">Tag Number</td><td class="c">:</td><td>{{ job.tag_no|default:"-" }}</td></tr>
+          <tr><td class="l">Test Pressure</td><td class="c">:</td><td>{{ hv.test_pressure }}</td></tr>
+        </table>
+      </td>
+      <td class="half">
+        {% for s in hs %}
+        <table class="kv ws">
+          <tr><td class="n">{{ forloop.counter }}.</td><td class="l">Name</td><td class="c">:</td><td>{{ s.name }}</td></tr>
+          <tr><td></td><td class="l">Serial Number</td><td class="c">:</td><td>{{ s.serial }}</td></tr>
+          <tr><td></td><td class="l">Certificate No.</td><td class="c">:</td><td>{{ s.cert_no }}</td></tr>
+        </table>
+        {% endfor %}
+      </td>
+    </tr>
+    <tr><th class="hd" colspan="2">References</th></tr>
+    <tr>
+      <td class="split">Procedure No. : {{ HYDRO.procedure_no }}</td>
+      <td class="split">Guideline : {{ HYDRO.guideline }}</td>
+    </tr>
+    <tr><th class="hd" colspan="2">Test Conditions</th></tr>
+    <tr>
+      <td class="split">Temperature during Test : {{ HYDRO.temp_during_test }}</td>
+      <td class="split">Test Medium: {{ HYDRO.test_medium }}</td>
+    </tr>
+  </table>
+
+  <!-- ===== Results ===== -->
+  <div class="h-results">Test Results:</div>
+  <div class="h-press"><b>Hydrotest Pressure:</b><b class="v">{{ hv.test_pressure }}</b></div>
+  <div class="h-statement">{{ HYDRO.statement }}</div>
+
+  <!-- ===== Remarks ===== -->
+  <div class="c-comments">
+    <b class="h">Remarks:</b>
+    {% for r in HYDRO.remarks %}<p>• {{ r }}</p>{% endfor %}
+  </div>
+
+  <!-- ===== Signatures ===== -->
+  <div class="c-sign">
+    <div>
+      <b class="h">Tested by :</b>
+      <div class="row"><span class="t">{{ HYDRO.engineer_title }}</span><span class="c">:</span><span><input type="text" class="sign-name" data-sign="ht" value="{{ HYDRO.engineer_name }}" aria-label="Engineer name" spellcheck="false"></span></div>
+    </div>
+    <div>
+      <b class="h">Approved by:</b>
+      <div class="row"><span class="t">{{ HYDRO.approver_title }}</span><span class="c">:</span><span>{{ HYDRO.approver_name }}</span></div>
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="c-foot">
+    <img class="wika" src="{% static 'jobs/img/wika_logo.png' %}" alt="WIKA">
+    <div class="addr">
+      <b>{{ CERT.footer.headline }}</b>
+      <span>{{ CERT.footer.address }}</span>
+      <small>{{ CERT.footer.form_no }}</small>
+    </div>
+    <table class="contact">
+      <tr><td>Tel</td><td>: {{ CERT.footer.tel }}</td></tr>
+      <tr><td>Fax</td><td>: {{ CERT.footer.fax }}</td></tr>
+      <tr><td>E-Mail</td><td>: {{ CERT.footer.email }}</td></tr>
+      <tr><td>Website</td><td>: {{ CERT.footer.website }}</td></tr>
+    </table>
+    <img class="iso" src="{% static 'jobs/img/iso_logo.png' %}" alt="ISO 9001">
+  </footer>
+</section>

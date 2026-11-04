@@ -1,0 +1,19 @@
+{% load static %}<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf" content="{{ csrf_token }}">
+<title>{% block title %}Calibration Dashboard{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'jobs/app.css' %}">
+</head><body>
+<header class="topbar"><div class="topbar-in">
+  <a href="{% url 'dashboard' %}" class="logo" aria-label="Home">
+    <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 17a10 10 0 1 1 17.4 0"/><circle cx="12" cy="14" r="1.2"/></svg>
+  </a>
+  <div class="brand"><h1>Calibration Dashboard</h1><small>{% block sub %}Job sheet records{% endblock %}</small></div>
+  <div class="spacer"></div>
+  {% block actions %}{% endblock %}
+</div></header>
+{% block body %}{% endblock %}
+<div id="toast" class="toast" role="status"></div>
+{% block scripts %}{% endblock %}
+</body></html>

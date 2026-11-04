@@ -1,0 +1,142 @@
+/* =====================================================================
+   Calibration Certificate – replica of the Accutech sample (FRM/AAF/39)
+   Everything is scoped under .cert so Hydrotest / VDF reports are untouched.
+   ===================================================================== */
+.sheet.cert {
+  padding: 9mm 12mm 0;
+  min-height: 297mm;
+  font: italic 10.5px/1.25 Arial, Helvetica, sans-serif;
+  color: #000;
+}
+.cert table { border-collapse: collapse; width: 100%; margin: 0; }
+.cert td, .cert th { border: 0; padding: 0; font-size: inherit; vertical-align: top; text-align: left; background: none; }
+.cert b { font-weight: 700; }
+
+/* ---- top block ---- */
+.cert .c-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8mm; }
+.cert .c-main { flex: 1; min-width: 0; }
+.cert .c-title { font: normal 700 25px/1.1 Arial, Helvetica, sans-serif; margin: 0 0 8px; letter-spacing: .2px; }
+.cert .c-logo { width: 62mm; height: auto; margin-top: 1mm; flex: none; }
+.cert .c-id th { width: 38mm; font: italic 700 14px/1.2 Arial, sans-serif; padding: 3px 0; white-space: nowrap; }
+.cert .c-id td { padding: 3px 0; font-weight: 700; font-size: 10.5px; }
+.cert .c-id td.col { width: 8mm; font: italic 700 14px/1.2 Arial, sans-serif; }
+.cert .c-id .addr { font-weight: 400; }
+.cert .c-id tr.gap th, .cert .c-id tr.gap td { padding-bottom: 8px; }
+.cert .c-certno { display: inline-block; border: 1px solid #000; padding: 1px 9px; font: italic 700 15px/1.25 Arial, sans-serif; }
+
+/* ---- dates strip ---- */
+.cert .c-dates {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 1px solid #000; border-bottom: 1px solid #000;
+  margin: 6px 0 12px; padding: 4px 0 5px;
+}
+.cert .c-dates span { white-space: nowrap; }
+.cert .c-dates b { font-size: 11.5px; }
+.cert .c-dates .sep { font-style: normal; display: inline-block; margin: 0 14px 0 16px; }
+
+/* ---- spec table ---- */
+.cert .c-spec { border: 1px solid #000; table-layout: fixed; }
+.cert .c-spec .hd {
+  background: #c0c0c0; text-align: center; font-weight: 700;
+  font-size: 12.5px; padding: 1px 0; border: 1px solid #000;
+}
+.cert .c-spec > tbody > tr > td.half { width: 50%; padding: 2px 0 3px; }
+.cert .c-spec > tbody > tr > td.half + td.half { border-left: 1px solid #000; }
+.cert .c-spec .ctr { text-align: center; border-top: 1px solid #000; padding: 1px 0; }
+.cert .c-spec .cond { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 0; }
+.cert table.kv td { padding: 1px 2px; line-height: 1.3; }
+.cert table.kv td.l { width: 29mm; white-space: nowrap; }
+.cert table.kv td.c { width: 5mm; text-align: center; }
+.cert table.kv td.n { width: 5mm; white-space: nowrap; }
+.cert table.kv.ws td.l { width: 26mm; }
+.cert table.kv.ws + table.kv.ws { margin-top: 8px; }
+.cert table.kv.ws td.n { width: 4.5mm; }
+.cert table.kv.ws tr:nth-child(n+2) td.l { padding-left: 4mm; }
+.cert table.kv.ws tr:first-child td.l { padding-left: 0; }
+
+.cert table.cond3 { table-layout: fixed; }
+.cert table.cond3 td { padding: 2px 4px; white-space: nowrap; }
+.cert table.cond3 td + td { border-left: 1px solid #000; }
+.cert table.cond3 .lb { display: inline-block; min-width: 31mm; padding-left: 3mm; }
+.cert table.cond3 i { font-style: normal; display: inline-block; width: 8mm; text-align: center; }
+.cert table.cond3 td:nth-child(3) .lb { min-width: 26mm; }
+
+/* ---- results heading ---- */
+.cert .c-reshead { display: flex; justify-content: space-between; align-items: baseline; margin: 12px 0 5px; }
+.cert .c-reshead b { font-size: 12.5px; }
+.cert .c-reshead em { font-style: italic; margin-left: 12px; }
+.cert .c-reshead span { margin-right: 4px; }
+
+/* ---- readings table ---- */
+.cert table.cal { border: 1px solid #000; table-layout: fixed; }
+.cert table.cal th, .cert table.cal td { border: 1px solid #000; text-align: center; vertical-align: middle; }
+.cert table.cal thead th {
+  background: #c0c0c0; font-weight: 700; font-size: 10.5px; line-height: 1.15; padding: 1px 3px;
+}
+.cert table.cal tbody td { height: 21px; padding: 1px 3px; font-size: 11px; }
+.cert table.cal input.rd {
+  width: 100%; min-width: 0; border: 0; background: #fffbe6; text-align: center;
+  font: italic 11px Arial, sans-serif; padding: 2px 0; color: #000;
+  -moz-appearance: textfield; appearance: textfield;
+}
+.cert table.cal input.rd::-webkit-outer-spin-button,
+.cert table.cal input.rd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cert table.cal input.rd:focus { outline: 2px solid #0b5c73; background: #fff; }
+.cert .calhint { margin: 0 0 6px; }
+
+/* ---- notes / comments ---- */
+.cert .h { display: block; font-weight: 700; }
+.cert .c-notes { margin-top: 10px; }
+.cert .c-notes .h { font-size: 10px; margin-bottom: 3px; }
+.cert .ckrow { display: flex; align-items: center; gap: 5px; margin: 0 0 3px; cursor: pointer; }
+.cert input.ck {
+  -webkit-appearance: none; appearance: none; width: 12px; height: 12px; margin: 0;
+  border: 1px solid #555; background: #fff; flex: none; position: relative; cursor: pointer;
+}
+.cert input.ck:checked::after {
+  content: "✓"; position: absolute; left: 1px; top: -3px; font: normal 12px/16px Arial, sans-serif; color: #000;
+}
+.cert .c-comments { margin-top: 10px; }
+.cert .c-comments .h { font-size: 10px; margin-bottom: 3px; }
+.cert .c-comments p { margin: 0 0 1px; padding-left: 8px; text-indent: -8px; }
+
+/* ---- signatures ---- */
+.cert .c-sign { display: flex; margin-top: 14px; }
+.cert .c-sign > div { flex: 1; }
+.cert .c-sign .h { font-size: 12.5px; margin-bottom: 4px; }
+.cert .c-sign .row { display: flex; }
+.cert .c-sign .row .t { width: 38mm; }
+.cert .c-sign .row .c { width: 12mm; }
+
+/* ---- footer ---- */
+.cert .c-foot {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  border-top: 2px solid #e2231a;
+  display: flex; align-items: center; gap: 3.5mm;
+  padding: 1.5mm 9mm 3mm; font-style: normal; font-family: Arial, Helvetica, sans-serif;
+}
+.cert .c-foot .wika { height: 13mm; width: auto; flex: none; }
+.cert .c-foot .addr { flex: 1; display: flex; flex-direction: column; font-size: 8.5px; gap: 2px; color: #222; white-space: nowrap; }
+.cert .c-foot .addr b { color: #1f56a5; font-size: 11.5px; line-height: 1.2; font-weight: 700; }
+.cert .c-foot .addr b, .cert .c-foot .addr span, .cert .c-foot .addr small { display: block; margin-left: 0; padding-left: 0; text-indent: 0; }
+.cert .c-foot .addr small { font-size: 7px; margin-top: 4px; }
+.cert .c-foot .contact { width: auto; font-size: 9px; flex: none; line-height: 1.35; }
+.cert .c-foot .contact td { padding: 0 2px; white-space: nowrap; }
+.cert .c-foot .contact td:first-child { width: 11mm; }
+.cert .c-foot .iso { height: 22mm; width: auto; flex: none; }
+
+/* ---- print ---- */
+/* margin:0 removes the browser's own header/footer (date, title, URL, page no.) */
+@page { size: A4; margin: 0; }
+@media print {
+  .sheet.cert { padding: 10mm 12mm 12mm; height: 296mm; min-height: 0; overflow: hidden; }
+  .cert table.cal input.rd { background: transparent; }
+  .cert input.ck { border-color: #555; }
+}
+
+/* out-of-tolerance reading (screen only) */
+.cert table.cal input.rd.bad { background: #fde2e2; color: #b00020; outline: 2px solid #d32f2f; }
+@media print { .cert table.cal input.rd.bad { background: transparent; color: inherit; outline: none; } }
+
+/* ---- Foundation Fieldbus layout: taller first header row, as in FF_Format.pdf ---- */
+.cert.cert-ff table.cal thead tr.tall th { height: 34px; }

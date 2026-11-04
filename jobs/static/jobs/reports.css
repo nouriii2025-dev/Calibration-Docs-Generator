@@ -1,0 +1,311 @@
+@page {
+  size: A4;
+  margin: 10mm 12mm 12mm 12mm;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #e8ecef;
+  font: 10.5px/1.35 "Segoe UI", Arial, Helvetica, sans-serif;
+  color: #111;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Toolbar (screen only) */
+.bar {
+  position: sticky; top: 0; z-index: 20;
+  background: #0a2a3a; color: #fff;
+  padding: 9px 18px;
+  display: flex; gap: 10px; align-items: center;
+}
+.bar b { flex: 1; font-weight: 600; font-size: 13px; }
+.bar button {
+  font: inherit; padding: 6px 14px; border-radius: 6px;
+  border: 0; cursor: pointer; font-weight: 600;
+}
+.bar .p { background: #f59e0b; color: #111; }
+.bar .c { background: rgba(255,255,255,.15); color: #fff; }
+
+/* Page sheet */
+.sheet {
+  width: 210mm;
+  min-height: 277mm;
+  margin: 14px auto;
+  background: #fff;
+  padding: 8mm 10mm 14mm;
+  box-shadow: 0 3px 18px rgba(0,0,0,.12);
+  position: relative;
+  page-break-after: always;
+  break-after: page;
+}
+.sheet:last-of-type { page-break-after: auto; break-after: auto; }
+
+/* ========== HEADER (matches Accutech samples) ========== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2.5px solid #0b5c73;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-left img.logo-wika {
+  height: 38px;
+  width: auto;
+}
+.header-left .lab-info {
+  font-size: 9px;
+  line-height: 1.25;
+  color: #222;
+}
+.header-left .lab-info strong {
+  display: block;
+  font-size: 11px;
+  color: #0b5c73;
+  margin-bottom: 1px;
+}
+.header-right {
+  text-align: right;
+}
+.header-right img.logo-accutech {
+  height: 42px;
+  width: auto;
+  margin-bottom: 2px;
+}
+.header-right .ar {
+  font-size: 9px;
+  color: #333;
+  direction: rtl;
+  margin-top: 1px;
+}
+.header-right .en {
+  font-size: 8.5px;
+  color: #444;
+  margin-top: 1px;
+}
+
+/* Document title block */
+.doc-title {
+  text-align: center;
+  margin: 6px 0 8px;
+}
+.doc-title h1 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #0b5c73;
+  font-weight: 700;
+}
+.doc-title .sub {
+  font-size: 10px;
+  color: #555;
+  margin-top: 1px;
+}
+
+/* Meta line under title */
+.meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  font-size: 10.5px;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #c5d0d8;
+}
+.meta-line span b { color: #0b5c73; }
+
+/* Section headings */
+h3.sec {
+  margin: 10px 0 3px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  background: #0b5c73;
+  color: #fff;
+  padding: 3px 7px;
+  font-weight: 600;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2px;
+}
+td, th {
+  border: 1px solid #8a9aab;
+  padding: 3.5px 6px;
+  vertical-align: top;
+  font-size: 10.5px;
+}
+th {
+  background: #e8eef3;
+  font-weight: 600;
+  text-align: left;
+  font-size: 10px;
+}
+td.k {
+  width: 18%;
+  background: #f4f7f9;
+  font-weight: 600;
+  color: #222;
+  white-space: nowrap;
+}
+td.v { width: 32%; }
+td.blank { height: 18px; }
+
+/* Two-column label/value helper */
+.kv td.k { width: 22%; }
+.kv td.v { width: 28%; }
+
+/* Results table (calibration) */
+table.res th { text-align: center; font-size: 9.5px; }
+table.res td { text-align: center; height: 20px; }
+table.res td:first-child { font-weight: 600; text-align: left; }
+
+/* Checkbox style */
+.box {
+  display: inline-block;
+  width: 11px; height: 11px;
+  border: 1.5px solid #222;
+  vertical-align: -2px;
+  margin-right: 3px;
+  background: #fff;
+}
+.box.checked::after {
+  content: "✓";
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  line-height: 10px;
+  font-weight: 700;
+}
+
+/* Notes / comments */
+.notes {
+  font-size: 9.5px;
+  color: #333;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.notes ul {
+  margin: 2px 0 0 14px;
+  padding: 0;
+}
+.notes li { margin-bottom: 1px; }
+
+/* Signature block */
+.sign {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 4px;
+}
+.sign .s {
+  border-top: 1px solid #222;
+  padding-top: 3px;
+  font-size: 10.5px;
+  min-height: 48px;
+}
+.sign .s small {
+  display: block;
+  color: #555;
+  font-size: 9.5px;
+  margin-top: 1px;
+}
+.sign .s .name {
+  font-weight: 600;
+  min-height: 14px;
+}
+
+/* Footer */
+.foot {
+  position: absolute;
+  left: 10mm; right: 10mm; bottom: 6mm;
+  font-size: 8.5px;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid #bbb;
+  padding-top: 3px;
+}
+.foot .left { max-width: 70%; }
+.foot .right { text-align: right; }
+.foot img.iso {
+  height: 22px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+/* Dense variant (Visual report) */
+.sheet.dense td, .sheet.dense th { padding: 2.5px 5px; font-size: 10px; }
+.sheet.dense h3.sec { margin: 7px 0 2px; padding: 2.5px 6px; }
+
+/* Print */
+@media print {
+  body { background: #fff; }
+  .bar { display: none !important; }
+  .sheet {
+    margin: 0;
+    box-shadow: none;
+    width: auto;
+    min-height: 0;
+    padding: 0;
+    page-break-after: always;
+  }
+  .sheet:last-of-type { page-break-after: auto; }
+  .foot { left: 0; right: 0; bottom: 0; }
+}
+
+/* ========== Calibration certificate – readings table ========== */
+table.cal th { text-align: center; vertical-align: middle; font-size: 9.5px; }
+table.cal td { text-align: center; vertical-align: middle; height: 22px; padding: 2px 4px; }
+
+table.cal input.rd {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-bottom: 1px dashed #8a9aab;
+  background: #fffbe6;            /* light yellow = "type here" on screen */
+  text-align: center;
+  font: inherit;
+  padding: 1px 2px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* hide the up/down spinner arrows on number inputs */
+table.cal input.rd::-webkit-outer-spin-button,
+table.cal input.rd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+table.cal input.rd:focus { outline: 2px solid #0b5c73; background: #fff; }
+
+/* when printing, the boxes look like plain text */
+@media print {
+  table.cal input.rd { background: transparent; border-bottom: 0; }
+}
+
+.calhint { margin: 4px 0; padding: 4px 8px; background: #fffbe6; border: 1px solid #e8d98a; font-size: 10px; }
+@media print { .calhint { display: none; } }
+
+/* Editable engineer name on the signature block */
+input.sign-name {
+  font: inherit; color: inherit; background: transparent;
+  border: 0; border-bottom: 1px dashed #9aa5b1; border-radius: 0;
+  padding: 0; margin: 0; outline: none; min-width: 20mm; max-width: 60mm;
+}
+input.sign-name:hover, input.sign-name:focus { background: #fffbe6; border-bottom-color: #1f56a5; }
+@media print {
+  input.sign-name { border: 0; background: transparent; }
+}

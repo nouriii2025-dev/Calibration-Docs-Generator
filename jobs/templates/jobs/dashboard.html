@@ -1,0 +1,49 @@
+{% extends "jobs/base.html" %}{% load static %}
+{% block actions %}
+<button type="button" class="btn ghost" id="import-btn" data-url="{% url 'import' %}" title="Upload the updated original Excel file">
+  <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>Import Excel File</button>
+<input type="file" id="import-file" accept=".xlsx" hidden>
+<a class="btn ghost" href="{% url 'export' %}" title="Download the current data as a new Excel file">
+  <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Export to Excel</a>
+{% endblock %}
+{% block body %}
+<main class="wrap">
+  <section class="stats">
+    <div class="stat"><b>{{ total }}</b><span>Total records · {{ file_name }}</span></div>
+   
+  </section>
+
+  <section class="card">
+    <div class="toolbar">
+      <label class="search">
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="q" type="search" placeholder="Search tag, certificate, model, serial…" autocomplete="off"><kbd>/</kbd>
+      </label>
+      <select id="f-eq" aria-label="Equipment"><option value="">All equipment</option>{% for o in equipment_opts %}<option>{{ o }}</option>{% endfor %}</select>
+      <select id="f-st" aria-label="Status"><option value="">All statuses</option>{% for s in status_opts %}<option>{{ s }}</option>{% endfor %}</select>
+      <select id="f-dt" aria-label="Calibration date"><option value="">Any cal. date</option>{% for d in date_opts %}<option>{{ d }}</option>{% endfor %}</select>
+      <select id="f-sn" aria-label="Serial number"><option value="">Serial: any</option><option value="has">Serial entered</option><option value="missing">Serial missing</option></select>
+      <button id="reset" class="btn" hidden>Clear</button>
+      <span id="count" class="count"></span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          {% for k, label in columns %}<th>{{ label }}<span class="ar"></span></th>{% if forloop.first %}<th>Status<span class="ar"></span></th>{% endif %}{% endfor %}
+        </tr></thead>
+        <tbody id="rows">
+        {% for r in rows %}
+          <tr data-href="{% url 'job' r.data_sheet_no %}" data-search="{{ r.search }}" data-eq="{{ r.equipment }}" data-sn="{{ r.serial_no }}" data-dt="{{ r.cal_date }}" data-st="{{ r.status }}">
+            {% for c in r.cells %}<td{% if forloop.first %} class="first"{% endif %} title="{{ c }}">{% if c %}{{ c }}{% else %}<span class="dim">—</span>{% endif %}</td>{% if forloop.first %}<td><span class="badge {% if r.status == 'Completed' %}ok{% else %}pending{% endif %}">{{ r.status }}</span></td>{% endif %}{% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <div id="empty" class="empty">No records match your search.</div>
+    </div>
+    <div class="pager"><button id="prev" class="btn">← Prev</button><span id="pinfo"></span><button id="next" class="btn">Next →</button></div>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{% static 'jobs/dashboard.js' %}"></script>
+<script src="{% static 'jobs/import.js' %}"></script>{% endblock %}

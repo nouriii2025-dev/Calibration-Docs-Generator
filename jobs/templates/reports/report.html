@@ -1,0 +1,40 @@
+{% load static %}<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>{{ title }}</title>
+  <link rel="stylesheet" href="{% static 'jobs/reports.css' %}">
+  <link rel="stylesheet" href="{% static 'jobs/certificate.css' %}">
+  <link rel="stylesheet" href="{% static 'jobs/hydrotest.css' %}">
+  <link rel="stylesheet" href="{% static 'jobs/vdf.css' %}">
+</head><body>
+<div class="bar">
+  <b>{{ title }}</b>
+  <button class="p" type="button" onclick="window.print()">Print</button>
+  <button class="c" type="button" id="close-report" data-fallback="{% url 'job' job.data_sheet_no %}">Close</button>
+</div>
+
+{% if show_ht %}
+  {% include "reports/hydrotest.html" %}
+{% endif %}
+
+{% if show_vdf %}
+  {% include "reports/vdf.html" %}
+{% endif %}
+
+{% if show_cert %}
+  {% if is_ff %}
+    {% include "reports/certificate_ff.html" %}
+  {% else %}
+    {% include "reports/certificate.html" %}
+  {% endif %}
+{% endif %}
+<script src="{% static 'jobs/certificate.js' %}"></script>
+<script>
+/* Close: shut this window; if the browser refuses (tab not opened by the dashboard), go back to the job page. */
+document.getElementById('close-report').addEventListener('click', function () {
+  var fallback = this.dataset.fallback;
+  window.close();
+  setTimeout(function () { if (!window.closed) location.href = fallback; }, 150);
+});
+</script>
+<script src="{% static 'jobs/sign.js' %}" data-ds="{{ job.data_sheet_no }}"></script>
+{% if autoprint %}<script>addEventListener('load',()=>setTimeout(()=>print(),350))</script>{% endif %}
+</body></html>
