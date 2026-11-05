@@ -13,14 +13,16 @@
     if (!file) return;
     if (!/\.xlsx$/i.test(file.name)) { toast('Please choose an .xlsx file.', true); return; }
     if (!confirm(`Import "${file.name}"?\n\nThe dashboard data will be replaced by this file. ` +
-                 `A backup of the current data is saved first.`)) return;
+      `A backup of the current data is saved first.\n\n` +
+      `Certificates that were already generated are NOT changed. Use "Refresh from Excel" on a certificate to update it.`)) return;
     btn.disabled = true;
     const fd = new FormData(); fd.append('file', file);
     try {
       const r = await fetch(btn.dataset.url || '/import/', {method: 'POST', headers: {'X-CSRFToken': csrf}, body: fd});
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || 'Import failed.');
-      toast(`Imported ${j.rows} records: ${j.added} added, ${j.updated} updated, ${j.removed} removed.`);
+      toast(`Imported ${j.rows} records: ${j.added} added, ${j.updated} updated, ${j.removed} removed.` +
+        (j.certificates_kept ? ` ${j.certificates_kept} saved certificate(s) left unchanged.` : ''));
       setTimeout(() => location.reload(), 1800);
     } catch (e) { toast(e.message, true); btn.disabled = false; }
   });

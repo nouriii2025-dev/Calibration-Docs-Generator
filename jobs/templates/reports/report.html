@@ -1,4 +1,5 @@
 {% load static %}<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="csrf" content="{{ csrf_token }}">
 <title>{{ title }}</title>
   <link rel="stylesheet" href="{% static 'jobs/reports.css' %}">
   <link rel="stylesheet" href="{% static 'jobs/certificate.css' %}">
@@ -7,6 +8,11 @@
 </head><body>
 <div class="bar">
   <b>{{ title }}</b>
+  {% if show_cert %}
+    <span id="cert-status" class="cert-status" role="status"></span>
+    <button class="r" type="button" id="cert-refresh" data-url="{{ cert.refresh_url }}" 
+      title="Copy the latest Excel values into this certificate">Refresh from Excel</button>
+  {% endif %}
   <button class="p" type="button" onclick="window.print()">Print</button>
   <button class="c" type="button" id="close-report" data-fallback="{% url 'job' job.data_sheet_no %}">Close</button>
 </div>
@@ -20,13 +26,25 @@
 {% endif %}
 
 {% if show_cert %}
-  {% if is_ff %}
-    {% include "reports/certificate_ff.html" %}
-  {% else %}
-    {% include "reports/certificate.html" %}
+  {% if cert.changes %}
+  <div class="cert-diff" id="cert-diff">
+    <b>The Excel data has changed since this certificate was generated.</b>
+    This certificate still shows its saved data
+    ({% for c in cert.changes %}{{ c.label }}{% if not forloop.last %}, {% endif %}{% endfor %}).
+    Click <b>Refresh from Excel</b> to update it; your readings are kept.
+  </div>
   {% endif %}
+  {% with job=cjob %}
+    {% if is_ff %}
+      {% include "reports/certificate_ff.html" %}
+    {% else %}
+      {% include "reports/certificate.html" %}
+    {% endif %}
+  {% endwith %}
+  {{ cert.state|json_script:"cert-state" }}
 {% endif %}
-<script src="{% static 'jobs/certificate.js' %}"></script>
+
+<script src="{% static 'jobs/certificate.js' %}" data-save-url="{{ cert.save_url }}"></script>
 <script>
 /* Close: shut this window; if the browser refuses (tab not opened by the dashboard), go back to the job page. */
 document.getElementById('close-report').addEventListener('click', function () {

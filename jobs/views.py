@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from io import BytesIO
 from django.conf import settings
-from . import excel_store as store
+from . import cert_store, excel_store as store
 from .calc import *
 import re
 
@@ -124,6 +124,8 @@ def job_save(request, ds):
         }
 
         job = store.update_row(ds, updates)
+        # a record edited and saved here is an explicit change: carry it into its saved certificate
+        cert_store.apply_edits(ds, job["data_sheet_no"], {k: job.get(k, "") for k in updates})
     except json.JSONDecodeError:
         return JsonResponse({"ok": False, "error": "Invalid request."}, status=400)
     except store.StoreLocked as e:
@@ -140,12 +142,51 @@ REPORTS = {"hydrotest": "Hydrotest Report",
            "all": "Complete Calibration Pack"}
 
 
+# def report(request, ds, kind):
+#     if kind not in REPORTS:
+#         raise Http404("Unknown report")
+#     job = _find(ds)
+#     points, unit = test_points(job.get("cal_range"))
+#     cert_rows, cert_unit = certificate_rows(job.get("cal_range"), job.get("resolution"))
+#     return render(request, "reports/report.html", {
+#         "job": job, "kind": kind, "title": f"{REPORTS[kind]} – {job['tag_no']}",
+#         "show_ht": kind in ("hydrotest", "all"),
+#         "show_vdf": kind in ("vdf", "all"),
+#         "show_cert": kind in ("certificate", "all"),
+#         "points": points, "unit": unit,
+#         "autoprint": request.GET.get("print") == "1",
+#         "today": dt.date.today().strftime("%d/%m/%Y"),
+#         "cert_rows": cert_rows,
+#         "cert_unit": cert_unit,
+#         "cert_dp": precision(job.get("resolution")),
+#         "cert_tol": mbar_tolerance(job.get("cal_range"), job.get("accuracy")),
+#         "cert_tol_ma": ma_tolerance(job.get("cal_range"), job.get("accuracy")),
+#         "cv": certificate_view(job, cert_unit),
+#         "is_ff": is_fieldbus(job.get("communication")),
+#         "hv": hydrotest_view(job, settings.HYDRO.get("test_pressure", "")),
+#         "vv": vdf_view(job, settings.VDF),
+#         "hs": hydrotest_standards(request.GET.get("ref", ""), settings.HYDRO),
+#     })
 def report(request, ds, kind):
     if kind not in REPORTS:
         raise Http404("Unknown report")
     job = _find(ds)
     points, unit = test_points(job.get("cal_range"))
-    cert_rows, cert_unit = certificate_rows(job.get("cal_range"), job.get("resolution"))
+
+    # The certificate prints from its saved copy (created the first time it is opened),
+    # not from the live Excel row, so importing a new Excel file never overwrites it.
+    cjob, cert = job, {}
+    if kind in ("certificate", "all"):
+        snap = cert_store.get_or_create(ds, job)
+        cjob = snap["job"]
+        cert = {
+            "state": {"readings": snap.get("readings"), "calc": snap.get("calc"),
+                      "checks": snap.get("checks"), "sign": snap.get("sign") or {}},
+            "changes": cert_store.changes(snap, job),
+            "save_url": reverse("certificate_save", args=[ds]),
+            "refresh_url": reverse("certificate_refresh", args=[ds]),
+        }
+    cert_rows, cert_unit = certificate_rows(cjob.get("cal_range"), cjob.get("resolution"))
     return render(request, "reports/report.html", {
         "job": job, "kind": kind, "title": f"{REPORTS[kind]} – {job['tag_no']}",
         "show_ht": kind in ("hydrotest", "all"),
@@ -154,17 +195,41 @@ def report(request, ds, kind):
         "points": points, "unit": unit,
         "autoprint": request.GET.get("print") == "1",
         "today": dt.date.today().strftime("%d/%m/%Y"),
+        "cjob": cjob, "cert": cert,
         "cert_rows": cert_rows,
         "cert_unit": cert_unit,
-        "cert_dp": precision(job.get("resolution")),
-        "cert_tol": mbar_tolerance(job.get("cal_range"), job.get("accuracy")),
-        "cert_tol_ma": ma_tolerance(job.get("cal_range"), job.get("accuracy")),
-        "cv": certificate_view(job, cert_unit),
-        "is_ff": is_fieldbus(job.get("communication")),
+        "cert_dp": precision(cjob.get("resolution")),
+        "cert_tol": mbar_tolerance(cjob.get("cal_range"), cjob.get("accuracy")),
+        "cert_tol_ma": ma_tolerance(cjob.get("cal_range"), cjob.get("accuracy")),
+        "cv": certificate_view(cjob, cert_unit),
+        "is_ff": is_fieldbus(cjob.get("communication")),
         "hv": hydrotest_view(job, settings.HYDRO.get("test_pressure", "")),
         "vv": vdf_view(job, settings.VDF),
         "hs": hydrotest_standards(request.GET.get("ref", ""), settings.HYDRO),
     })
+
+
+@require_POST
+def certificate_save(request, ds):
+    """Autosave of what is typed on the certificate."""
+    _find(ds)
+    try:
+        payload = json.loads(request.body or "{}")
+        if not isinstance(payload, dict):
+            raise ValueError
+        cert_store.save_state(ds, payload)
+    except (ValueError, json.JSONDecodeError):
+        return JsonResponse({"ok": False, "error": "Invalid request."}, status=400)
+    except cert_store.CertError as e:
+        return JsonResponse({"ok": False, "error": str(e)}, status=400)
+    return JsonResponse({"ok": True})
+
+
+@require_POST
+def certificate_refresh(request, ds):
+    """Explicit 'Refresh from Excel' for one certificate."""
+    job = _find(ds)
+    return JsonResponse({"ok": True, **cert_store.refresh(ds, job)})
 
 
 def export_excel(request):
@@ -188,4 +253,4 @@ def import_excel(request):
         return JsonResponse({"ok": False, "error": str(e)}, status=423)
     except store.StoreError as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
-    return JsonResponse({"ok": True, **summary})
+    return JsonResponse({"ok": True, **summary, "certificates_kept": cert_store.count()})

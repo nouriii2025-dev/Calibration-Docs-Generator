@@ -32,6 +32,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ---- Excel data source (edit this path, or set CAL_EXCEL_PATH) ----------
 EXCEL_PATH = Path(os.environ.get("CAL_EXCEL_PATH", BASE_DIR / "data" / "job_sheet.xlsx"))
 
+# Saved Calibration Certificates (one JSON file each). Importing an Excel file never touches this folder.
+CERT_DIR = Path(os.environ.get("CAL_CERT_DIR", EXCEL_PATH.parent / "certificates"))
+
 # ---- Letterhead used on printed documents --------------------------------
 LAB = {
     "name": "Your Calibration Laboratory",

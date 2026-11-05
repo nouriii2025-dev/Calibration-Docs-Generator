@@ -7,6 +7,7 @@
   function fit(i) { i.size = Math.max((i.value || '').length + 1, 8); }
 
   inputs.forEach(function (i) {
+    if (i.dataset.sign === 'cert') return;     // certificate name is saved on the server by certificate.js
     var key = 'cal-sign:' + ds + ':' + i.dataset.sign;
     try {
       var saved = localStorage.getItem(key);
